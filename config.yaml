@@ -1,0 +1,37 @@
+paths:                        # vystupy, relativne ke koreni repozitare
+  graphs_dir: graphs          # vystupni grafy (.png)
+  models_dir: models          # ulozene modely (torch.save slovniku, .pt)
+  logs_dir: logs              # log treninku (svm.log)
+
+data:                         # 2D hracky (blobs, circles, moons); breast cancer je pevny
+  n_samples: 200              # pocet bodu kazdeho 2D datasetu
+  test_size: 0.3              # podil testovacich bodu (stratifikovane rozdeleni)
+  blobs_std: 1.0              # smerodatna odchylka shluku (vetsi = vic prekryvu)
+  circles_noise: 0.08         # sum kruznic
+  circles_factor: 0.4         # pomer polomeru vnitrni a vnejsi kruznice
+  moons_noise: 0.15           # sum pulmesicu
+
+kernels:                      # jadro kazde faze: name z {linear, poly, rbf}
+                              # r = stupen polynomu (jen poly), gamma = sirka RBF (jen rbf)
+  blobs:   {name: linear, r: 2, gamma: 1.0}     # faze A1 -- linearne oddelitelne shluky
+  circles: {name: poly,   r: 2, gamma: 1.0}     # faze A2 -- kruznice, polynom stupne 2
+  moons:   {name: rbf,    r: 2, gamma: 1.0}     # faze A3 -- pulmesice
+  breast_cancer: {name: rbf, r: 2, gamma: 0.03} # faze B -- 30 priznaku; jadro volite experimentem
+
+training:                     # dualni trenink: projektovany gradientni vystup
+  c: 1.0                      # regularizace C = box 0 <= lambda <= c
+  lr: auto                    # krok vystupu: auto = 1/mu_max (vzdy stabilni), nebo cislo > 0
+  n_iters: 3000               # pocet iteraci
+  sv_threshold: 1.0e-5        # lambda > prah => support vektor
+
+sweep:                        # experimenty s regularizaci a sirkou jadra
+  c_values: [0.01, 0.1, 1.0, 10.0]            # sweep_c na breast cancer (faze B2)
+  grid_c_values: [0.1, 1.0, 10.0]             # mrizka c x gamma na pulmesicich (faze A3)
+  grid_gamma_values: [0.1, 1.0, 10.0]
+
+diagnostics:                  # prahy kontrol, ktere pipeline vypisuje
+  trick_tolerance: 1.0e-10    # max |gram - phi phi^T| pri overeni kernelove triku
+  load_tolerance: 1.0e-10     # max rozdil h(x) puvodniho a nacteneho modelu
+  convergence_rtol: 0.05      # L(lambda) za poslednich 10 % iteraci vzrostlo o > 5 % => [POZOR]
+
+seed: 42                      # seed generovani a rozdeleni dat (>= 0)
