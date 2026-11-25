@@ -1,4 +1,4 @@
-# Cvičení 12: Support Vector Machines a kernelový trik — duál v PyTorchi
+# Cvičení 12: Support Vector Machines a kernelový trik — duál v PyTorch
 
 Dvanácté praktické cvičení předmětu **Umělá inteligence v medicíně** se vrací
 ke klasifikaci, tentokrát metodou **Support Vector Machines (SVM)**. V Cvičení
